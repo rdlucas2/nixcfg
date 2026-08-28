@@ -1,6 +1,9 @@
-# Ignore build outputs from performing a nix-build or `nix build` command
+# Subagent-driven-development scratch workspace (ledgers, briefs, review packages)
+.superpowers/
+
+# Nix build results
 result
 result-*
 
-# Ignore automatically generated direnv output
-.direnv
+# direnv
+.direnv/
