@@ -20,4 +20,12 @@
   networking.wireless.enable = true;
   networking.wireless.secretsFile = config.sops.secrets.wifi-env.path;
   networking.wireless.networks."THE_INTERNET".pskRaw = "ext:wifi_psk";
+
+  # Ship the wireless CLI tools. Without these there is no way to scan for
+  # APs or inspect association state on a headless box, which turns any WiFi
+  # problem into guesswork.
+  environment.systemPackages = [
+    pkgs.iw
+    pkgs.wpa_supplicant # provides wpa_cli
+  ];
 }
