@@ -36,7 +36,61 @@ sudo NIX_CONFIG='extra-experimental-features = nix-command flakes' nixos-rebuild
 `switch` does the same activation but also sets the new generation as the
 boot default.
 
-## 3. Flags: what actually works on NixOS 25.11
+## 3. Which branch gets which verb
+
+The verb follows the branch, so that the boot default is only ever set
+from reviewed, merged config:
+
+| Where you are | Verb | Why |
+|---|---|---|
+| Feature branch | `test` | Activates for evaluation, but leaves the boot default alone. A reboot returns to whatever `main` last set. |
+| `main`, after merge | `switch` | Activates *and* makes it the boot default. |
+
+`test` is not a dry run. It fully activates: services restart, users are
+created and deleted, networking reconfigures. The single guarantee it
+gives is that a power cycle undoes it — which is precisely the recovery
+path that still works when a bad config has cost you the network and
+the ability to log in. That is why branch work uses it.
+
+Use `boot` only for changes that cannot take effect without a reboot
+anyway (a kernel or initrd change): it sets the boot default without
+disturbing the running system. `build` is the genuinely inert one — it
+compiles the config and activates nothing.
+
+Note that `test` leaves no trace in `/nix/var/nix/profiles/system`, so
+testing repeatedly does not accumulate generations. To tell which kind
+of activation the running system came from:
+
+```
+readlink -f /run/current-system
+readlink -f /nix/var/nix/profiles/system
+```
+
+Equal means the last activation was a `switch`; different means a `test`
+is currently active and will vanish on reboot.
+
+## 4. Deploying from the dev machine instead of the Pi
+
+`git pull` on the Pi is not required. `nixos-rebuild` can evaluate
+locally and hand both the build and the activation to the Pi:
+
+```
+nixos-rebuild test --flake .#pi \
+  --build-host ryan@192.168.0.71 \
+  --target-host ryan@192.168.0.71 \
+  --ask-elevate-password
+```
+
+`--build-host` must point at the Pi: evaluating an aarch64 config on an
+x86_64 machine works fine, but *building* it there does not without
+emulation or a cross setup.
+
+The flake gotcha applies here too — flakes only see files git knows
+about, so a newly created module that has not been `git add`-ed is
+invisible and evaluation fails with "path ... is not tracked by Git".
+Staging is enough; it does not have to be committed.
+
+## 5. Flags: what actually works on NixOS 25.11
 
 - Plain `--extra-experimental-features nix-command flakes` is **not** a
   valid `nixos-rebuild` flag on NixOS 25.11 — the Python rewrite of
@@ -44,7 +98,7 @@ boot default.
 - The working form is setting `NIX_CONFIG` in the environment, as shown
   above.
 
-## 4. Offline rollback
+## 6. Offline rollback
 
 `nixos-rebuild --rollback` **fails with no network**, because it tries to
 fetch the flake registry first. If the host has no working network (e.g.

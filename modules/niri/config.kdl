@@ -52,6 +52,9 @@ binds {
     Mod+E hotkey-overlay-title="Open the File Manager: nautilus" {
         spawn "nautilus"
     }
+    Mod+B hotkey-overlay-title="Open the Browser: brave" {
+        spawn "brave"
+    }
     Mod+Shift+Slash {
         show-hotkey-overlay
     }
