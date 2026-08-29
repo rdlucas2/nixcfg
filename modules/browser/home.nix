@@ -3,7 +3,17 @@
   # Brave is MPL-2.0 in nixpkgs (meta.license.free = true) and has a prebuilt
   # aarch64 binary in cache.nixos.org, so it needs no allowUnfreePredicate
   # entry and does not build from source on the Pi.
-  home.packages = [ pkgs.brave ];
+  #
+  # Brave is Chromium, so it has the identical credential-backend detection
+  # problem VS Code does (see modules/dev-tools.nix): an unrecognised
+  # XDG_CURRENT_DESKTOP makes Electron fall back to its near-plaintext
+  # `basic` password store instead of the running gnome-keyring. Brave fails
+  # quietly rather than prompting, so this would otherwise go unnoticed.
+  home.packages = [
+    (pkgs.brave.override {
+      commandLineArgs = "--password-store=gnome-libsecret";
+    })
+  ];
 
   # Two separate mechanisms decide what "open this link" means, and both have
   # to be set or the CLI logins that prompted this stay broken:
