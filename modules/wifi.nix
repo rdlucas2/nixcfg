@@ -17,9 +17,31 @@
     mode = "0400";
   };
 
+  # Without a country code the radio sits in the "world" domain (country 00),
+  # where nearly every channel is PASSIVE-SCAN: the card may listen but may not
+  # transmit. Association attempts then time out silently, which reads like a
+  # bad password but is actually a regulatory block. The 5 GHz band the AP uses
+  # (ch 157 / 5785 MHz) is not permitted at all under country 00.
+  # wirelessRegulatoryDatabase installs wireless-regdb, without which the
+  # country setting has no rules to apply.
+  hardware.wirelessRegulatoryDatabase = true;
+  networking.wireless.extraConfig = ''
+    country=US
+  '';
+
   networking.wireless.enable = true;
   networking.wireless.secretsFile = config.sops.secrets.wifi-env.path;
-  networking.wireless.networks."THE_INTERNET".pskRaw = "ext:wifi_psk";
+
+  networking.wireless.networks."THE_INTERNET" = {
+    pskRaw = "ext:wifi_psk";
+    # The AP advertises "PSK SAE" — WPA2/WPA3 transition mode — so it signals
+    # management-frame protection. ieee80211w=1 negotiates PMF when offered and
+    # stays compatible when it is not; leaving it off can make such APs ignore
+    # the client outright, which also surfaces as an auth timeout.
+    extraConfig = ''
+      ieee80211w=1
+    '';
+  };
 
   # Ship the wireless CLI tools. Without these there is no way to scan for
   # APs or inspect association state on a headless box, which turns any WiFi
