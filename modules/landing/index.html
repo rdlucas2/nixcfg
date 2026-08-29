@@ -138,6 +138,7 @@
       <tr><td class="k"><code>vim</code></td><td>Terminal editor</td></tr>
       <tr><td class="k"><code>docker</code></td><td>Containers; you are in the <code>docker</code> group</td></tr>
       <tr><td class="k"><code>brave</code></td><td>Browser</td></tr>
+      <tr><td class="k"><code>tailscale</code></td><td>Mesh VPN &mdash; this host is reachable from your tailnet</td></tr>
       <tr><td class="k"><code>iw</code>, <code>wpa_cli</code></td><td>Wi-Fi inspection when the network misbehaves</td></tr>
     </table>
   </div>
@@ -196,6 +197,25 @@ nix run nixpkgs#ffmpeg -- -i in.mp4 out.webm</pre>
     <p class="note">Add a package to <code class="inline">modules/dev-tools.nix</code> only once you've decided you
     want it there permanently. Downloads linger in the store until
     <code class="inline">nix-collect-garbage -d</code> reclaims them.</p>
+  </div>
+
+  <div class="card">
+    <h2>Tailscale</h2>
+    <div class="grp">
+      <h3>Join the tailnet (once)</h3>
+      <pre>sudo tailscale up</pre>
+      <p class="note">Prints a URL to approve in a browser. The node key persists in
+      <code class="inline">/var/lib/tailscale</code> across reboots and rebuilds, so this is not repeated.</p>
+    </div>
+    <div class="grp">
+      <h3>Where am I?</h3>
+      <pre>tailscale status
+tailscale ip -4</pre>
+    </div>
+    <p class="note">The <code class="inline">tailscale0</code> interface is trusted by the firewall, so anything
+    this host listens on is reachable from your other devices without opening a LAN port for it.
+    A service bound to <code class="inline">127.0.0.1</code> is still local-only &mdash; bind it to
+    <code class="inline">0.0.0.0</code> to reach it over the tailnet.</p>
   </div>
 
   <div class="card span2">
