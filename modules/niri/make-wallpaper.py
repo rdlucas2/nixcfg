@@ -11,7 +11,7 @@ Colours are taken from the niri config in this directory: #7fc8ff is the
 focus-ring accent, so the desktop and the compositor agree on a palette.
 """
 import sys
-from PIL import Image
+from PIL import Image, ImageDraw, ImageFont
 
 W = int(sys.argv[1]) if len(sys.argv) > 1 else 1920
 H = int(sys.argv[2]) if len(sys.argv) > 2 else 1080
@@ -49,6 +49,63 @@ for y in range(H):
             max(0, min(255, int(g + d4 + 0.5))),
             max(0, min(255, int(b + d4 + 0.5))),
         )
+
+# --- hint text -------------------------------------------------------------
+# A fresh niri session gives no visual clue that it is keyboard-driven, so the
+# wallpaper carries the one binding that reveals all the others.
+
+FONT_CANDIDATES = [
+    "/usr/share/fonts/truetype/dejavu/DejaVuSans{}.ttf",
+    "/run/current-system/sw/share/X11/fonts/DejaVuSans{}.ttf",
+    "/usr/share/fonts/dejavu/DejaVuSans{}.ttf",
+]
+
+
+def load(bold, size):
+    suffix = "-Bold" if bold else ""
+    for pattern in FONT_CANDIDATES:
+        try:
+            return ImageFont.truetype(pattern.format(suffix), size)
+        except OSError:
+            continue
+    return None
+
+
+size = max(14, round(H * 0.0175))
+regular, bold = load(False, size), load(True, size)
+
+if regular and bold:
+    MUTED, ACCENT = (0x8a, 0x93, 0xa2), (0x7f, 0xc8, 0xff)
+    # (text, font, colour, extra letter-spacing) — keys are picked out so the
+    # combination reads at a glance instead of as a sentence.
+    parts = [
+        ("use ", regular, MUTED, 0),
+        ("SUPER", bold, ACCENT, 1),
+        (" + ", regular, MUTED, 0),
+        ("SHIFT", bold, ACCENT, 1),
+        (" + ", regular, MUTED, 0),
+        ("/", bold, ACCENT, 0),
+        ("  to view niri keybinds", regular, MUTED, 0),
+    ]
+
+    draw = ImageDraw.Draw(img)
+
+    def width(text, font, spacing):
+        return draw.textlength(text, font=font) + spacing * len(text)
+
+    total = sum(width(t, f, sp) for t, f, _, sp in parts)
+    x, y = (W - total) / 2, H * 0.9
+
+    for text, font, colour, spacing in parts:
+        if spacing:
+            for ch in text:
+                draw.text((x, y), ch, font=font, fill=colour)
+                x += draw.textlength(ch, font=font) + spacing
+        else:
+            draw.text((x, y), text, font=font, fill=colour)
+            x += draw.textlength(text, font=font)
+else:
+    print("warning: no DejaVu font found, wallpaper generated without hint text")
 
 img.save(OUT, "PNG", optimize=True)
 print(f"wrote {OUT} ({W}x{H})")

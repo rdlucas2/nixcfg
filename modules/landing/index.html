@@ -135,7 +135,7 @@
       <tr><td class="k"><code>git</code>, <code>gh</code></td><td>Version control; <code>gh</code> also answers git's credential prompts</td></tr>
       <tr><td class="k"><code>claude</code></td><td>Claude Code CLI</td></tr>
       <tr><td class="k"><code>code</code></td><td>VS Code (Electron — the heavy one)</td></tr>
-      <tr><td class="k"><code>hx</code></td><td>Helix editor — LSP built in, no config needed</td></tr>
+      <tr><td class="k"><code>vim</code></td><td>Terminal editor</td></tr>
       <tr><td class="k"><code>docker</code></td><td>Containers; you are in the <code>docker</code> group</td></tr>
       <tr><td class="k"><code>brave</code></td><td>Browser</td></tr>
       <tr><td class="k"><code>iw</code>, <code>wpa_cli</code></td><td>Wi-Fi inspection when the network misbehaves</td></tr>
@@ -148,7 +148,7 @@
       <h3>1 · Edit on a branch</h3>
       <pre>cd ~/nixcfg
 git checkout -b my-change
-hx modules/dev-tools.nix        # or: code .</pre>
+vim modules/dev-tools.nix       # or: code .</pre>
       <p class="note">New files must be <code class="inline">git add</code>-ed before Nix can see them —
       flakes only read files git tracks. Staging is enough; it needn't be committed.</p>
     </div>

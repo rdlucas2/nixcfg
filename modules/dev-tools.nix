@@ -29,9 +29,8 @@
     (pkgs.vscode.override {
       commandLineArgs = "--password-store=gnome-libsecret";
     })
-    # Terminal editor: single Rust binary, LSP and tree-sitter built in, no
-    # plugin manager or config file needed to be useful. Cached for aarch64.
-    pkgs.helix
+    # Terminal editor.
+    pkgs.vim
   ];
 
   # VS Code's Remote-SSH server downloads prebuilt binaries that expect a
