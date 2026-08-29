@@ -260,4 +260,7 @@ binds {
         power-off-monitors
     }
 }
+// Open the system guide on login. The file is installed by
+// modules/landing/nixos.nix, so this path is stable and always exists.
+spawn-at-startup "brave" "file:///etc/nixcfg/landing.html"
 include optional=true "/etc/niri/host.kdl"

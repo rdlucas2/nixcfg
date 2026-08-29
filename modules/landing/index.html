@@ -1,0 +1,234 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>pi — system guide</title>
+<style>
+  :root {
+    --bg: #f7f7f5; --panel: #ffffff; --ink: #1a1a19; --muted: #6b6b66;
+    --line: #e2e2dd; --accent: #7fc8ff; --accent-ink: #0b5e8a;
+    --kbd-bg: #f0f0ec; --kbd-line: #cfcfc8; --code-bg: #f2f2ee;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --bg: #16171a; --panel: #1e2024; --ink: #e8e8e4; --muted: #9a9a94;
+      --line: #2e3138; --accent: #7fc8ff; --accent-ink: #7fc8ff;
+      --kbd-bg: #272a30; --kbd-line: #3a3e46; --code-bg: #232630;
+    }
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0; background: var(--bg); color: var(--ink);
+    font: 15px/1.55 ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  }
+  .wrap { max-width: 1180px; margin: 0 auto; padding: 32px 24px 64px; }
+  header { border-bottom: 2px solid var(--line); padding-bottom: 18px; margin-bottom: 28px; }
+  h1 { margin: 0 0 4px; font-size: 26px; letter-spacing: -0.02em; }
+  h1 .host { color: var(--accent-ink); }
+  .sub { color: var(--muted); font-size: 14px; margin: 0; }
+  h2 {
+    font-size: 12px; text-transform: uppercase; letter-spacing: 0.09em;
+    color: var(--muted); margin: 0 0 12px; font-weight: 600;
+  }
+  .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(330px, 1fr)); gap: 20px; }
+  .card {
+    background: var(--panel); border: 1px solid var(--line); border-radius: 10px;
+    padding: 18px 20px; overflow-x: auto;
+  }
+  .card.span2 { grid-column: 1 / -1; }
+  table { width: 100%; border-collapse: collapse; font-size: 14px; }
+  td { padding: 5px 0; vertical-align: top; border-bottom: 1px solid var(--line); }
+  tr:last-child td { border-bottom: none; }
+  td.k { width: 44%; white-space: nowrap; padding-right: 14px; }
+  kbd {
+    display: inline-block; background: var(--kbd-bg); border: 1px solid var(--kbd-line);
+    border-bottom-width: 2px; border-radius: 4px; padding: 1px 6px;
+    font: 12px/1.5 ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+    white-space: nowrap;
+  }
+  code, pre {
+    font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+    font-size: 13px;
+  }
+  pre {
+    background: var(--code-bg); border: 1px solid var(--line); border-radius: 7px;
+    padding: 11px 13px; overflow-x: auto; margin: 8px 0 12px;
+  }
+  code.inline { background: var(--code-bg); border-radius: 4px; padding: 1px 5px; }
+  .note { color: var(--muted); font-size: 13px; margin: 10px 0 0; }
+  .pill {
+    display: inline-block; font-size: 11px; padding: 1px 7px; border-radius: 20px;
+    background: var(--kbd-bg); border: 1px solid var(--kbd-line); color: var(--muted);
+  }
+  .grp { margin-top: 16px; }
+  .grp:first-child { margin-top: 0; }
+  .grp h3 {
+    font-size: 13px; margin: 0 0 6px; color: var(--ink); font-weight: 600;
+  }
+  a { color: var(--accent-ink); }
+  footer { margin-top: 34px; color: var(--muted); font-size: 13px; }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<header>
+  <h1><span class="host">pi</span> — system guide</h1>
+  <p class="sub">NixOS on a Raspberry Pi 4 · niri (Wayland) · config lives in <code class="inline">~/nixcfg</code></p>
+</header>
+
+<div class="grid">
+
+  <div class="card">
+    <h2>Launching</h2>
+    <table>
+      <tr><td class="k"><kbd>Super</kbd>+<kbd>Return</kbd></td><td>Terminal (alacritty)</td></tr>
+      <tr><td class="k"><kbd>Super</kbd>+<kbd>D</kbd></td><td>App launcher (fuzzel)</td></tr>
+      <tr><td class="k"><kbd>Super</kbd>+<kbd>E</kbd></td><td>File manager (nautilus)</td></tr>
+      <tr><td class="k"><kbd>Super</kbd>+<kbd>B</kbd></td><td>Browser (Brave)</td></tr>
+      <tr><td class="k"><kbd>Super</kbd>+<kbd>Shift</kbd>+<kbd>/</kbd></td><td>Show every keybind</td></tr>
+    </table>
+    <p class="note"><kbd>Super</kbd> is the Windows key. niri tiles windows in
+    <em>columns</em> that scroll sideways — there is no fixed grid, the row just
+    keeps going right.</p>
+  </div>
+
+  <div class="card">
+    <h2>Windows &amp; columns</h2>
+    <table>
+      <tr><td class="k"><kbd>Super</kbd>+<kbd>H</kbd> <kbd>J</kbd> <kbd>K</kbd> <kbd>L</kbd></td><td>Move focus (or arrow keys)</td></tr>
+      <tr><td class="k"><kbd>Super</kbd>+<kbd>Shift</kbd>+ same</td><td>Move the window</td></tr>
+      <tr><td class="k"><kbd>Super</kbd>+<kbd>Q</kbd></td><td>Close window</td></tr>
+      <tr><td class="k"><kbd>Super</kbd>+<kbd>Tab</kbd></td><td>Overview of everything</td></tr>
+      <tr><td class="k"><kbd>Super</kbd>+<kbd>R</kbd></td><td>Cycle column width</td></tr>
+      <tr><td class="k"><kbd>Super</kbd>+<kbd>-</kbd> / <kbd>=</kbd></td><td>Width by 10%</td></tr>
+      <tr><td class="k"><kbd>Super</kbd>+<kbd>F</kbd></td><td>Maximize column</td></tr>
+      <tr><td class="k"><kbd>Super</kbd>+<kbd>Shift</kbd>+<kbd>F</kbd></td><td>True fullscreen</td></tr>
+      <tr><td class="k"><kbd>Super</kbd>+<kbd>C</kbd></td><td>Center the column</td></tr>
+      <tr><td class="k"><kbd>Super</kbd>+<kbd>V</kbd></td><td>Float / unfloat</td></tr>
+      <tr><td class="k"><kbd>Super</kbd>+<kbd>,</kbd> / <kbd>.</kbd></td><td>Pull into / push out of column</td></tr>
+      <tr><td class="k"><kbd>Super</kbd>+<kbd>[</kbd> / <kbd>]</kbd></td><td>Consume or expel sideways</td></tr>
+      <tr><td class="k"><kbd>Super</kbd>+<kbd>Home</kbd> / <kbd>End</kbd></td><td>First / last column</td></tr>
+    </table>
+  </div>
+
+  <div class="card">
+    <h2>Workspaces &amp; screen</h2>
+    <table>
+      <tr><td class="k"><kbd>Super</kbd>+<kbd>1</kbd>…<kbd>5</kbd></td><td>Go to workspace</td></tr>
+      <tr><td class="k"><kbd>Super</kbd>+<kbd>Shift</kbd>+<kbd>1</kbd>…<kbd>5</kbd></td><td>Send column there</td></tr>
+      <tr><td class="k"><kbd>Super</kbd>+<kbd>U</kbd> / <kbd>I</kbd></td><td>Workspace down / up</td></tr>
+      <tr><td class="k"><kbd>Super</kbd>+scroll</td><td>Workspace down / up</td></tr>
+      <tr><td class="k"><kbd>Super</kbd>+<kbd>Alt</kbd>+<kbd>1</kbd></td><td>Screenshot (select area)</td></tr>
+      <tr><td class="k"><kbd>Super</kbd>+<kbd>Alt</kbd>+<kbd>2</kbd></td><td>Screenshot whole screen</td></tr>
+      <tr><td class="k"><kbd>Super</kbd>+<kbd>Alt</kbd>+<kbd>3</kbd></td><td>Screenshot window</td></tr>
+      <tr><td class="k"><kbd>Super</kbd>+<kbd>Shift</kbd>+<kbd>P</kbd></td><td>Blank the monitors</td></tr>
+      <tr><td class="k"><kbd>Super</kbd>+<kbd>Shift</kbd>+<kbd>E</kbd></td><td>Quit niri (back to greeter)</td></tr>
+    </table>
+    <p class="note">Screenshots land in <code class="inline">~/Pictures/Screenshots/</code>.</p>
+  </div>
+
+  <div class="card">
+    <h2>What's installed</h2>
+    <table>
+      <tr><td class="k"><code>git</code>, <code>gh</code></td><td>Version control; <code>gh</code> also answers git's credential prompts</td></tr>
+      <tr><td class="k"><code>claude</code></td><td>Claude Code CLI</td></tr>
+      <tr><td class="k"><code>code</code></td><td>VS Code (Electron — the heavy one)</td></tr>
+      <tr><td class="k"><code>hx</code></td><td>Helix editor — LSP built in, no config needed</td></tr>
+      <tr><td class="k"><code>docker</code></td><td>Containers; you are in the <code>docker</code> group</td></tr>
+      <tr><td class="k"><code>brave</code></td><td>Browser</td></tr>
+      <tr><td class="k"><code>iw</code>, <code>wpa_cli</code></td><td>Wi-Fi inspection when the network misbehaves</td></tr>
+    </table>
+  </div>
+
+  <div class="card span2">
+    <h2>Changing this machine</h2>
+    <div class="grp">
+      <h3>1 · Edit on a branch</h3>
+      <pre>cd ~/nixcfg
+git checkout -b my-change
+hx modules/dev-tools.nix        # or: code .</pre>
+      <p class="note">New files must be <code class="inline">git add</code>-ed before Nix can see them —
+      flakes only read files git tracks. Staging is enough; it needn't be committed.</p>
+    </div>
+    <div class="grp">
+      <h3>2 · Try it — reverts on reboot</h3>
+      <pre>sudo NIX_CONFIG='extra-experimental-features = nix-command flakes' \
+  nixos-rebuild test --flake .#pi</pre>
+      <p class="note"><strong>test</strong> is not a dry run — it fully activates, restarting services and
+      reconfiguring the network. Its one guarantee is that a power cycle undoes it. That is the
+      escape hatch when a change costs you the network or the ability to log in.</p>
+    </div>
+    <div class="grp">
+      <h3>3 · Keep it — merge first, then switch</h3>
+      <pre>git checkout main &amp;&amp; git merge my-change &amp;&amp; git push
+sudo NIX_CONFIG='extra-experimental-features = nix-command flakes' \
+  nixos-rebuild switch --flake .#pi</pre>
+      <p class="note"><strong>switch</strong> also sets the boot default, so only <code class="inline">main</code> ever
+      decides what this machine boots into. Full runbook: <code class="inline">~/nixcfg/docs/DEPLOY.md</code></p>
+    </div>
+  </div>
+
+  <div class="card span2">
+    <h2>Running software without installing it</h2>
+    <p class="note" style="margin-top:0">You almost never need to edit the config to try a tool. Nothing below
+    changes the system, and nothing survives past the command.</p>
+    <div class="grp">
+      <h3>Drop into a shell that has it</h3>
+      <pre>nix shell nixpkgs#wireshark
+# wireshark is now on PATH; type `exit` and it is gone</pre>
+    </div>
+    <div class="grp">
+      <h3>Run it once and be done</h3>
+      <pre>nix run nixpkgs#cowsay -- hello
+nix run nixpkgs#ffmpeg -- -i in.mp4 out.webm</pre>
+      <p class="note">Everything after <code class="inline">--</code> is passed to the program, not to nix.</p>
+    </div>
+    <div class="grp">
+      <h3>Several tools at once</h3>
+      <pre>nix shell nixpkgs#jq nixpkgs#httpie nixpkgs#ripgrep</pre>
+    </div>
+    <div class="grp">
+      <h3>Find what provides a command</h3>
+      <pre>nix search nixpkgs ripgrep</pre>
+    </div>
+    <p class="note">Add a package to <code class="inline">modules/dev-tools.nix</code> only once you've decided you
+    want it there permanently. Downloads linger in the store until
+    <code class="inline">nix-collect-garbage -d</code> reclaims them.</p>
+  </div>
+
+  <div class="card span2">
+    <h2>When something breaks</h2>
+    <div class="grp">
+      <h3>A `test` went wrong</h3>
+      <pre>sudo reboot        # reverts to the last `switch`ed generation</pre>
+    </div>
+    <div class="grp">
+      <h3>A `switch` went wrong, and there is no network</h3>
+      <p class="note" style="margin-top:0"><code class="inline">nixos-rebuild --rollback</code> fails offline — it tries to fetch
+      the flake registry first. Use these instead:</p>
+      <pre>sudo nix-env --rollback -p /nix/var/nix/profiles/system
+sudo /nix/var/nix/profiles/system/bin/switch-to-configuration switch</pre>
+      <p class="note">Or reboot and pick an older generation from the U-Boot / extlinux menu —
+      interrupt the countdown to get the list.</p>
+    </div>
+    <div class="grp">
+      <h3>Which generation am I actually running?</h3>
+      <pre>readlink -f /run/current-system
+readlink -f /nix/var/nix/profiles/system</pre>
+      <p class="note">Equal → the last activation was a <code class="inline">switch</code> and will persist.
+      Different → a <code class="inline">test</code> is active and disappears on reboot.</p>
+    </div>
+  </div>
+
+</div>
+
+<footer>
+  This page is generated from <code>modules/landing/index.html</code> in the nixcfg repo and
+  served from <code>/etc/nixcfg/landing.html</code>. Edit it there, not here.
+</footer>
+
+</div>
+</body>
+</html>
