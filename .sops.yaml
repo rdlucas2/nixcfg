@@ -1,7 +1,9 @@
 keys:
   - &dev_ryan age1zsgl0hfkx7h75xcw7ckx3js3a9ugfawekvhnv0v27p08vat9xypsuzlmz0
+  - &host_pi age1nxydfrlkc4f5xmxk6073mahm9jf0737y4qlgd9t9rdd7r23txyxsdpmfkg
 creation_rules:
   - path_regex: secrets/secrets\.yaml$
     key_groups:
       - age:
           - *dev_ryan
+          - *host_pi
