@@ -3,6 +3,7 @@
   imports = [
     ./hardware-configuration.nix
     ../../modules/users.nix
+    ../../modules/ssh.nix
   ];
 
   networking.hostName = "pi";
