@@ -4,6 +4,7 @@
     ./hardware-configuration.nix
     ../../modules/users.nix
     ../../modules/ssh.nix
+    ../../modules/git.nix
   ];
 
   networking.hostName = "pi";
