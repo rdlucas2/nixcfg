@@ -13,6 +13,7 @@
     ../../modules/landing/nixos.nix
     ../../modules/wifi.nix
     ../../modules/tailscale.nix
+    ../../modules/audio.nix
   ];
 
   networking.hostName = "pi";
