@@ -1,4 +1,28 @@
-// Host-specific niri output/window rules for `pi`.
-// Empty for now — add output configuration here once the external
-// monitor / Xreal glasses display mode is known (check with
-// `niri msg outputs` after the first graphical session).
+// Host-specific niri output configuration for `pi`.
+// Deployed to /etc/niri/host.kdl and pulled in by the shared config via
+// `include optional=true`.
+//
+// Outputs are matched on their EDID make/model/serial string rather than on
+// the connector name (HDMI-A-1). Both the desk monitor and the Xreal glasses
+// plug into that same single HDMI port, so keying on the connector would apply
+// one display's settings to the other. Matching on identity means each display
+// gets its own block and whichever is plugged in wins.
+//
+// To find the string for a new display, plug it in and run: niri msg outputs
+
+output "PNP(AOC) 2243W AQXC59A000725" {
+    mode "1920x1080@60.000"
+    scale 1
+    transform "normal"
+    position x=0 y=0
+}
+
+// Xreal AR glasses — not yet configured. They cannot be connected at the same
+// time as the monitor above, so their EDID string is still unknown. To add
+// them: plug them in, run `niri msg outputs`, and copy the quoted Output name
+// into a block like the one above with the mode it reports.
+//
+// output "<string from niri msg outputs>" {
+//     mode "1920x1080@60.000"
+//     scale 1
+// }
