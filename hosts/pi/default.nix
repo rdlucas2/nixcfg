@@ -2,6 +2,7 @@
 {
   imports = [
     ./hardware-configuration.nix
+    ../../modules/users.nix
   ];
 
   networking.hostName = "pi";
@@ -13,10 +14,6 @@
   nix.settings.experimental-features = [ "nix-command" "flakes" ];
 
   system.stateVersion = "25.11";
-
-  users.users.ryan = {
-    isNormalUser = true;
-  };
 
   sops.defaultSopsFile = ../../secrets/secrets.yaml;
 
