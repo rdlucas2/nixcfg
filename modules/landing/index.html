@@ -199,6 +199,43 @@ nix run nixpkgs#ffmpeg -- -i in.mp4 out.webm</pre>
   </div>
 
   <div class="card span2">
+    <h2>Housekeeping &mdash; old generations</h2>
+    <p class="note" style="margin-top:0">Every <code class="inline">switch</code> leaves a generation behind, and each one
+    pins its whole closure in the nix store. They are what you roll back to, so they are worth
+    keeping &mdash; until they aren't.</p>
+    <div class="grp">
+      <h3>See what has accumulated</h3>
+      <pre>sudo nix-env --list-generations -p /nix/var/nix/profiles/system
+df -h /</pre>
+    </div>
+    <div class="grp">
+      <h3>Collapse to just the running one</h3>
+      <pre>sudo nix-collect-garbage -d      # system profile
+nix-collect-garbage -d           # your user profile (home-manager)
+sudo /run/current-system/bin/switch-to-configuration boot</pre>
+      <p class="note"><strong>That third command is not optional.</strong> Deleting generations does not
+      rewrite <code class="inline">/boot/extlinux/extlinux.conf</code>. Skip it and the U-Boot menu still lists
+      entries pointing at store paths that no longer exist &mdash; pick one and it will not boot.
+      <code class="inline">switch-to-configuration boot</code> regenerates the menu against what actually survives.</p>
+    </div>
+    <div class="grp">
+      <h3>Know what you are giving up</h3>
+      <p class="note" style="margin-top:0">Afterwards there are <em>zero</em> rollback targets. A bad switch
+      stops meaning &ldquo;reboot and pick an older entry&rdquo; and starts meaning &ldquo;put the SD card in
+      another machine&rdquo;. The next <code class="inline">switch</code> creates a second generation and restores the
+      safety net, so the exposure is only the window in between &mdash; which is why this belongs
+      <em>after</em> a switch you have logged into and used, never before one.</p>
+    </div>
+    <div class="grp">
+      <h3>Or keep a margin instead</h3>
+      <pre>sudo nix-env --delete-generations 30d -p /nix/var/nix/profiles/system
+sudo nix-collect-garbage
+sudo /run/current-system/bin/switch-to-configuration boot</pre>
+      <p class="note">Keeps anything from the last 30 days rather than collapsing to one.</p>
+    </div>
+  </div>
+
+  <div class="card span2">
     <h2>When something breaks</h2>
     <div class="grp">
       <h3>A `test` went wrong</h3>
