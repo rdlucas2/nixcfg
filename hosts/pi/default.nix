@@ -8,6 +8,7 @@
     ../../modules/docker.nix
     ../../modules/dev-tools.nix
     ../../modules/niri/nixos.nix
+    ../../modules/browser/nixos.nix
     ../../modules/wifi.nix
   ];
 

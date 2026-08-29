@@ -11,11 +11,12 @@
   #   BROWSER      — consulted first by terminal programs. `claude` and
   #                  `gh auth login` both need to hand a sign-in URL to a
   #                  browser; with nothing set they have nothing to launch.
+  #                  Set in this module's nixos.nix, not here — see the note
+  #                  there for why home-manager is the wrong level for it.
   #   mimeapps     — what xdg-open (and therefore GUI apps opening links)
   #                  consults. A bare niri session has no desktop environment
   #                  supplying a default, so without this clicking a link in
   #                  VS Code or nautilus does nothing at all.
-  home.sessionVariables.BROWSER = "brave";
 
   xdg.mimeApps = {
     enable = true;
