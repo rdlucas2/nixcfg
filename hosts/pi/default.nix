@@ -5,6 +5,7 @@
     ../../modules/users.nix
     ../../modules/ssh.nix
     ../../modules/git.nix
+    ../../modules/docker.nix
   ];
 
   networking.hostName = "pi";
