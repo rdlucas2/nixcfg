@@ -23,4 +23,17 @@
   # dconf backs GTK/GNOME settings persistence; GTK apps warn and lose state
   # without it.
   programs.dconf.enable = true;
+
+  # A secret-service provider. VS Code and Brave both store their own logins
+  # (VS Code's GitHub account, saved passwords) through libsecret, which needs
+  # a daemon behind it. A full desktop environment supplies one; a bare niri
+  # session does not, so without this VS Code's GitHub sign-in fails to
+  # persist even once the git credential helper is working — they are separate
+  # problems with separate fixes.
+  #
+  # The PAM entry unlocks the keyring with the login password so it is not a
+  # second prompt every session. It touches the `login` stack only; sshd's PAM
+  # stack is untouched, so SSH remains a working way in if this misbehaves.
+  services.gnome.gnome-keyring.enable = true;
+  security.pam.services.login.enableGnomeKeyring = true;
 }

@@ -16,6 +16,9 @@
     # Microsoft ships aarch64 builds, so this runs natively on the Pi. It is
     # Electron, so expect it to be heavier than the terminal tooling here.
     pkgs.vscode
+    # Terminal editor: single Rust binary, LSP and tree-sitter built in, no
+    # plugin manager or config file needed to be useful. Cached for aarch64.
+    pkgs.helix
   ];
 
   # VS Code's Remote-SSH server downloads prebuilt binaries that expect a
