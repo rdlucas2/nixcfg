@@ -17,12 +17,28 @@ output "PNP(AOC) 2243W AQXC59A000725" {
     position x=0 y=0
 }
 
-// Xreal AR glasses — not yet configured. They cannot be connected at the same
-// time as the monitor above, so their EDID string is still unknown. To add
-// them: plug them in, run `niri msg outputs`, and copy the quoted Output name
-// into a block like the one above with the mode it reports.
+// XREAL One AR glasses. Same HDMI port as the monitor above — only one can be
+// connected at a time — which is exactly why these blocks are keyed on EDID
+// identity rather than on the connector both of them present as (HDMI-A-1).
 //
-// output "<string from niri msg outputs>" {
-//     mode "1920x1080@60.000"
-//     scale 1
-// }
+// 90 Hz is the panel's preferred mode and the one it negotiates on its own.
+// 120 Hz is also offered and is usually worth having on head-mounted displays,
+// where a higher refresh rate cuts the judder you notice when turning your
+// head. It is not the default here because it is unverified that the Pi 4's
+// HDMI will actually drive 1080p120. To try it without committing:
+//
+//     niri msg output "Nreal XREAL One Unknown" mode 1920x1080@120.000
+//
+// Scale is 1 because that is what the glasses have been used at. Note that the
+// EDID reports a physical size of 1860x1050 mm — nearly two metres wide, which
+// is nonsense for a headset — so niri cannot infer a sensible scale and falls
+// back to 1. If text reads too small through the optics, try `scale 1.25` or
+// `1.5` live with `niri msg output ... scale 1.25` and put whichever works
+// here. niri msg changes are temporary and never written to disk, so they are
+// safe to experiment with.
+output "Nreal XREAL One Unknown" {
+    mode "1920x1080@90.000"
+    scale 1
+    transform "normal"
+    position x=0 y=0
+}
