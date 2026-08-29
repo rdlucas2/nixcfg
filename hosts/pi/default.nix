@@ -7,6 +7,7 @@
     ../../modules/git.nix
     ../../modules/docker.nix
     ../../modules/dev-tools.nix
+    ../../modules/niri/nixos.nix
   ];
 
   networking.hostName = "pi";
@@ -20,6 +21,8 @@
   system.stateVersion = "25.11";
 
   sops.defaultSopsFile = ../../secrets/secrets.yaml;
+
+  environment.etc."niri/host.kdl".source = ./niri.kdl;
 
   home-manager.useGlobalPkgs = true;
   home-manager.useUserPackages = true;

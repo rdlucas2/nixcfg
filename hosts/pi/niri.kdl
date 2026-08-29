@@ -1,0 +1,4 @@
+// Host-specific niri output/window rules for `pi`.
+// Empty for now — add output configuration here once the external
+// monitor / Xreal glasses display mode is known (check with
+// `niri msg outputs` after the first graphical session).
