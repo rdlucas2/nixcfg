@@ -260,6 +260,10 @@ binds {
         power-off-monitors
     }
 }
+// Paint the desktop background. -m fill scales and crops to cover the output
+// rather than stretching, so this stays correct on a display with a different
+// aspect ratio (the Xreal glasses). swaybg keeps running to hold the surface.
+spawn-at-startup "swaybg" "-i" "/etc/niri/wallpaper.png" "-m" "fill"
 // Open the system guide on login. The file is installed by
 // modules/landing/nixos.nix, so this path is stable and always exists.
 spawn-at-startup "brave" "file:///etc/nixcfg/landing.html"

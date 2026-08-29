@@ -14,6 +14,10 @@
 
   programs.niri.enable = true;
 
+  # Installed to a fixed path so config.kdl's spawn-at-startup can reference
+  # it without knowing the store hash or the user's home directory.
+  environment.etc."niri/wallpaper.png".source = ./wallpaper.png;
+
   # Nautilus (installed in this module's home.nix) relies on gvfs for trash,
   # removable media, and network locations. Without it the file manager runs
   # but silently cannot do most of what a file manager is for.
