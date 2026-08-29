@@ -39,6 +39,19 @@ blur {
     off
 }
 binds {
+    // Application launching. The upstream config these binds were adapted
+    // from kept its spawn bindings in a separate included file, which this
+    // repo deliberately does not use — so without these, niri starts with no
+    // way to open a terminal, launcher, or file manager at all.
+    Mod+Return hotkey-overlay-title="Open a Terminal: alacritty" {
+        spawn "alacritty"
+    }
+    Mod+D hotkey-overlay-title="Run an Application: fuzzel" {
+        spawn "fuzzel"
+    }
+    Mod+E hotkey-overlay-title="Open the File Manager: nautilus" {
+        spawn "nautilus"
+    }
     Mod+Shift+Slash {
         show-hotkey-overlay
     }
