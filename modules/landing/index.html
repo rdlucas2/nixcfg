@@ -219,6 +219,68 @@ tailscale ip -4</pre>
   </div>
 
   <div class="card span2">
+    <h2>Audio &amp; Bluetooth</h2>
+    <p class="note" style="margin-top:0">Headphones reconnect on their own at login &mdash; a
+    <code class="inline">bluetooth-autoconnect</code> user service connects any paired, trusted device that
+    advertises an Audio Sink. When it doesn't, these are the fallbacks.</p>
+    <div class="grp">
+      <h3>Reconnect by hand</h3>
+      <pre>bluetoothctl devices Paired          # find the address
+bluetoothctl connect &lt;MAC&gt;</pre>
+    </div>
+    <div class="grp">
+      <h3>Did the autoconnect service run?</h3>
+      <pre>systemctl --user status bluetooth-autoconnect</pre>
+      <p class="note">It is a oneshot pulled in by <code class="inline">graphical-session.target</code>, so it fires
+      once per login. Retries at 0, 2, 4 and 8 seconds, then gives up quietly &mdash; it always exits 0
+      so absent headphones can never fail your session.</p>
+    </div>
+    <div class="grp">
+      <h3>Pair something new</h3>
+      <pre>bluetoothctl
+power on
+scan on
+# put the device in pairing mode, wait for it to appear
+pair &lt;MAC&gt;
+trust &lt;MAC&gt;
+connect &lt;MAC&gt;
+scan off
+exit</pre>
+      <p class="note">Don't skip <code class="inline">trust</code>. Without it the device is not eligible for
+      autoconnect, and you will re-pair every session. Note that <code class="inline">trust</code> alone is not
+      enough either &mdash; it lets bluez <em>accept</em> a connection, never start one. That is the whole
+      reason the service above exists.</p>
+    </div>
+    <div class="grp">
+      <h3>Which output is actually being used?</h3>
+      <pre>wpctl status                         # the * marks the default sink
+wpctl set-default &lt;id&gt;               # switch to another
+wpctl inspect @DEFAULT_AUDIO_SINK@</pre>
+      <p class="note"><strong>Sink IDs change on every reboot.</strong> Always re-read them from
+      <code class="inline">wpctl status</code> rather than reusing a number you saw earlier &mdash; targeting a stale
+      id fails silently or plays to the wrong device. Run <code class="inline">wpctl status</code> while something is
+      playing and a <code class="inline">Streams:</code> section shows which app is on which sink.</p>
+    </div>
+    <div class="grp">
+      <h3>Working outputs on this machine</h3>
+      <table>
+        <tr><td class="k">Bluetooth headphones</td><td>Preferred. A2DP/AAC.</td></tr>
+        <tr><td class="k">3.5&nbsp;mm jack</td><td>Works. The fallback when nothing else is connected.</td></tr>
+        <tr><td class="k">HDMI &rarr; XREAL glasses</td><td><strong>No audio.</strong> The Peakdo HDMI-to-USB-C
+        converter passes the audio EDID but does not carry the stream &mdash; confirmed on other hardware.
+        Use the glasses for video and Bluetooth for sound.</td></tr>
+      </table>
+    </div>
+    <div class="grp">
+      <h3>If Bluetooth audio stutters</h3>
+      <pre>iw dev wlan0 link | grep freq</pre>
+      <p class="note">Should report ~5785&nbsp;MHz. The Pi's BCM43455 shares one 2.4&nbsp;GHz antenna between
+      WiFi and Bluetooth, so if WiFi has dropped to a 2.4&nbsp;GHz channel (2412&ndash;2472) the two are fighting
+      for the same radio. That is the cause far more often than the headphones are.</p>
+    </div>
+  </div>
+
+  <div class="card span2">
     <h2>Housekeeping &mdash; old generations</h2>
     <p class="note" style="margin-top:0">Every <code class="inline">switch</code> leaves a generation behind, and each one
     pins its whole closure in the nix store. They are what you roll back to, so they are worth
