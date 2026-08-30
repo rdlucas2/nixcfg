@@ -11,39 +11,25 @@
     alsa.enable = true;
     pulse.enable = true; # the ALSA/Pulse shims most applications still expect
 
-    # Route audio out of HDMI in preference to the Pi's analogue jack.
+    # NO HDMI preference is set here, and that is deliberate.
     #
-    # Both sinks ship with priority.session = 1000, and that tie is why sound
-    # was coming out of the pi-top's speakers rather than the display: with
-    # nothing to separate them WirePlumber picked the analogue fallback.
-    # Raising the HDMI sink breaks the tie in favour of the display.
+    # An earlier version of this module raised the HDMI sink's priority so
+    # sound would follow the display. That turned out to be actively harmful.
+    # The XREAL One glasses reach this host through a Peakdo HDMI-to-USB-C
+    # converter, and that converter passes the audio EDID without carrying the
+    # audio stream: the Pi reads the glasses by name, advertises FL/FR LPCM at
+    # 48 kHz, and clocks samples out at exactly real time — while nothing comes
+    # out of the glasses at all.
     #
-    # This is a preference, not a pin. When no HDMI display is attached the
-    # sink does not exist, so WirePlumber falls back to the analogue output on
-    # its own — no rule needed for that direction.
+    # Confirmed on unrelated hardware: the same converter and glasses on an
+    # x86 desktop enumerate an "XREAL One" audio device that is equally silent,
+    # and the glasses produce sound when plugged straight into a phone's USB-C.
+    # The fault is the converter, not this machine.
     #
-    # The node name encodes the HDMI controller's address, so it identifies the
-    # port rather than what is plugged into it. The Pi 4's second port would be
-    # a separate node (platform-fef05700) and is not matched here, since
-    # nothing uses it.
-    #
-    # Caveat worth knowing: the glasses and the AOC monitor share this one
-    # port, so this rule cannot tell them apart. If the monitor turns out to
-    # expose an HDMI audio sink despite having no speakers, it would win this
-    # preference and play to nothing. A speakerless display usually advertises
-    # no audio in its EDID and so creates no sink at all, in which case the
-    # fallback handles it — but that is untested, because only one display can
-    # be connected at a time.
-    wireplumber.extraConfig."51-prefer-hdmi-output" = {
-      "monitor.alsa.rules" = [
-        {
-          matches = [ { "node.name" = "alsa_output.platform-fef00700.hdmi.hdmi-stereo"; } ];
-          actions.update-props = {
-            "priority.session" = 2000;
-            "priority.driver" = 2000;
-          };
-        }
-      ];
-    };
+    # So preferring HDMI routes audio into a sink that cannot produce sound.
+    # Leaving priorities alone lets the analogue output — which is verified
+    # working, via direct ALSA playback to card 0 — remain the fallback, and
+    # lets Bluetooth headphones take over when connected, which WirePlumber
+    # does on its own.
   };
 }

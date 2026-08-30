@@ -14,6 +14,7 @@
     ../../modules/wifi.nix
     ../../modules/tailscale.nix
     ../../modules/audio.nix
+    ../../modules/bluetooth.nix
   ];
 
   networking.hostName = "pi";
