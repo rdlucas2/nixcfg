@@ -55,6 +55,9 @@ binds {
     Mod+B hotkey-overlay-title="Open the Browser: brave" {
         spawn "brave"
     }
+    Mod+G hotkey-overlay-title="Open Moonlight: moonlight" {
+        spawn "moonlight"
+    }
     Mod+Shift+Slash {
         show-hotkey-overlay
     }
