@@ -20,12 +20,11 @@
   networking.hostName = "pi";
   nixpkgs.hostPlatform = "aarch64-linux";
 
-  # Explicit, deliberate DHCP config: wired (end0) is a fallback that must
-  # keep working, wireless (wlan0) is the primary link. Neither should be
-  # left to the default useDHCP behavior by accident.
+  # Wired (end0) is a fallback that must keep working, wireless (wlan0) is
+  # the primary link. Both are managed by NetworkManager (modules/wifi.nix),
+  # which runs DHCP itself and auto-creates a wired profile for end0, so
+  # dhcpcd is kept off both interfaces to avoid two DHCP clients fighting.
   networking.useDHCP = false;
-  networking.interfaces.end0.useDHCP = true;
-  networking.interfaces.wlan0.useDHCP = true;
 
   boot.loader.grub.enable = false;
   boot.loader.generic-extlinux-compatible.enable = true;

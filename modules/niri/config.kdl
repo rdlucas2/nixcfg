@@ -58,6 +58,9 @@ binds {
     Mod+G hotkey-overlay-title="Open Moonlight: moonlight" {
         spawn "moonlight"
     }
+    Mod+W hotkey-overlay-title="Change WiFi Network: nmtui" {
+        spawn "alacritty" "-e" "nmtui" "connect"
+    }
     Mod+Shift+Slash {
         show-hotkey-overlay
     }
