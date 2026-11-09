@@ -35,9 +35,10 @@
     options cfg80211 ieee80211_regdom=US
   '';
 
-  # NM runs its own wpa_supplicant; the declarative one must be off or the two
-  # fight over wlan0.
-  networking.wireless.enable = false;
+  # Don't set networking.wireless.enable here: the networkmanager module
+  # already turns it on itself (dbus-controlled wpa_supplicant that NM
+  # drives internally) whenever NM is enabled without iwd. Setting it
+  # explicitly, even to false, collides with that at equal priority.
   networking.networkmanager.enable = true;
 
   networking.networkmanager.ensureProfiles = {
